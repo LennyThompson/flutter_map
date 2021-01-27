@@ -45,6 +45,7 @@ class _MapState extends State<Map> {
   Widget _build(BuildContext context, BoxConstraints constraints) {
     final controller = widget.controller;
     final tileSize = controller.tileSize;
+    controller._sizeView = constraints.biggest;
     final size = constraints.biggest;
     final projection = controller._projection;
 
@@ -105,19 +106,24 @@ class _MapState extends State<Map> {
   }
 }
 
+const Size zeroSize = Size(0, 0);
+
 class MapController extends ChangeNotifier {
   LatLng _center;
   double _zoom;
   double tileSize;
+  Size _sizeView;
 
   final _projection = EPSG4326();
 
-  MapController({
-    required LatLng location,
-    double zoom: 14,
-    this.tileSize: 256,
-  })  : _center = location,
-        _zoom = zoom;
+  MapController(
+      {required LatLng location,
+      double zoom: 14,
+      this.tileSize: 256,
+      Size sizeView: zeroSize})
+      : _center = location,
+        _zoom = zoom,
+        _sizeView = sizeView;
 
   void drag(double dx, double dy) {
     var scale = pow(2.0, _zoom);
@@ -145,5 +151,18 @@ class MapController extends ChangeNotifier {
   set zoom(double zoom) {
     _zoom = zoom;
     notifyListeners();
+  }
+
+  Point latLngToScreen(LatLng position) {
+    final tileCenter =
+        _projection.fromLngLatToTileIndexWithZoom(_center, _zoom);
+    TileIndex tilePosition =
+        _projection.fromLngLatToTileIndexWithZoom(position, _zoom);
+    double dX = tilePosition.x - tileCenter.x;
+    double dY = tilePosition.y - tileCenter.y;
+    dX *= 256;
+    dY *= 256;
+
+    return Point((_sizeView.width / 2) + dX, (_sizeView.height / 2) + dY);
   }
 }
