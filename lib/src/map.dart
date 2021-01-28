@@ -113,17 +113,20 @@ class MapController extends ChangeNotifier {
   double _zoom;
   double tileSize;
   Size _sizeView;
+  Rectangle _rectCartesian;
 
   final _projection = EPSG4326();
 
   MapController(
       {required LatLng location,
+      required Rectangle rectCartesian,
       double zoom: 14,
       this.tileSize: 256,
       Size sizeView: zeroSize})
       : _center = location,
         _zoom = zoom,
-        _sizeView = sizeView;
+        _sizeView = sizeView,
+        _rectCartesian = rectCartesian;
 
   void drag(double dx, double dy) {
     var scale = pow(2.0, _zoom);
@@ -148,6 +151,8 @@ class MapController extends ChangeNotifier {
     return _zoom;
   }
 
+  Size get sizeView => _sizeView;
+
   set zoom(double zoom) {
     _zoom = zoom;
     notifyListeners();
@@ -164,5 +169,13 @@ class MapController extends ChangeNotifier {
     dY *= 256;
 
     return Point((_sizeView.width / 2) + dX, (_sizeView.height / 2) + dY);
+  }
+
+  Point trackCartesianToScreen(Point cartesian) {
+    final xScale = _sizeView.width / _rectCartesian.width;
+    final yScale = _sizeView.height / _rectCartesian.height;
+
+    return Point((cartesian.x - _rectCartesian.left) * xScale,
+        ((cartesian.y - _rectCartesian.top) * yScale));
   }
 }
