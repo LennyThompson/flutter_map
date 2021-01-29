@@ -1,6 +1,8 @@
 # map
 [![pub package](https://img.shields.io/pub/v/map.svg)](https://pub.dartlang.org/packages/map)
 
+_**NOTE - this is a fork of the original github repo...
+**_
 A flutter package to view a `Map` widget in Flutter apps.
 
 Map supports variety of raster tile providers including but not limited to Google Maps, OSM Maps and Yandex Maps. In version `0.2.0` of the package i made some changes in the package which opens possibility of displaying verctor tile maps (e.g. MBTiles/MVT/GeoJSON).
