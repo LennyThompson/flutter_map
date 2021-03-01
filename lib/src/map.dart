@@ -175,7 +175,10 @@ class MapController extends ChangeNotifier {
     final xScale = _sizeView.width / _rectCartesian.width;
     final yScale = _sizeView.height / _rectCartesian.height;
 
-    return Point((cartesian.x - _rectCartesian.left) * xScale,
-        ((cartesian.y - _rectCartesian.top) * yScale));
+    return Point(
+        (cartesian.x - _rectCartesian.left) * xScale,
+        _sizeView.height -
+            ((cartesian.y - (_rectCartesian.top - _rectCartesian.height)) *
+                yScale));
   }
 }
